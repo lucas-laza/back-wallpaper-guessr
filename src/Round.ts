@@ -4,6 +4,7 @@ import {
   Entity,
   ManyToOne,
   ManyToMany,
+  JoinTable,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Game } from "./Game";
@@ -19,10 +20,21 @@ export class Round extends BaseEntity {
   @ManyToOne(() => Game, { nullable: false })
   game!: Game;
 
-  @ManyToOne(() => Party, { nullable: false })
-  party!: Party;
+  @ManyToOne(() => Party, { nullable: true })
+  party!: Party | null;
 
   @ManyToMany(() => User)
+  @JoinTable({
+    name: "round_players",
+    joinColumn: {
+      name: "round_id",
+      referencedColumnName: "id"
+    },
+    inverseJoinColumn: {
+      name: "user_id",
+      referencedColumnName: "id"
+    }
+  })
   players!: User[];
 
   @ManyToOne(() => Wallpaper, { nullable: false })
@@ -30,4 +42,7 @@ export class Round extends BaseEntity {
 
   @Column({ nullable: false, default: 0 })
   guesses!: number;
+
+  @Column({ nullable: false })
+  relative_id!: number;
 }

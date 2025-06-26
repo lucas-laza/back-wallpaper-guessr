@@ -14,3 +14,6 @@ export type SearchLocation = {
   "population": number,
   "is_capital": boolean
 }
+
+export type GameStatus = "waiting" | "started" | "finished";
+export type GameMode = "classic" | "timed";

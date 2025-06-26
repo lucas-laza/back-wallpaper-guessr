@@ -2,6 +2,7 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -9,14 +10,15 @@ import {
 import { User } from "./User";
 import { Party } from "./Party";
 
-enum GameStatus {
+// Enum definitions
+export enum GameStatus {
   PENDING = "pending",
   IN_PROGRESS = "in_progress",
   ABORTED = "aborted",
   COMPLETED = "completed",
 }
 
-enum GameMode {
+export enum GameMode {
   STANDARD = "standard",
 }
 
@@ -25,22 +27,23 @@ export class Game extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Party, { nullable: true })
+  @ManyToOne(() => Party, { nullable: true, onDelete: "SET NULL" })
   party!: Party | null;
 
   @ManyToMany(() => User)
+  @JoinTable()  // Keep @JoinTable() here in Game (Only one side should have @JoinTable)
   players!: User[];
 
   @Column({
-    type: "enum",
-    enum: GameStatus,
+    type: "varchar",  
+    length: 20,  
     default: GameStatus.PENDING,
   })
   status!: GameStatus;
 
   @Column({
-    type: "enum",
-    enum: GameMode,
+    type: "varchar",  
+    length: 20,  
     default: GameMode.STANDARD,
   })
   gamemode!: GameMode;
@@ -48,13 +51,13 @@ export class Game extends BaseEntity {
   @Column()
   map!: string;
 
-  @Column({ default: 3, nullable: false, unsigned: true})
+  @Column({ default: 3, nullable: false, unsigned: true })
   rounds_number!: number;
 
-  @Column()
-  modifiers!: {};
+  @Column({ type: "json", nullable: true })
+  modifiers!: object | null;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: true, onDelete: "SET NULL" })
   winner!: User | null;
 
   @Column()
