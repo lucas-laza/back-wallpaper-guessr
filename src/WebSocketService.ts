@@ -401,23 +401,6 @@ export class WebSocketService {
     console.log(`[WebSocket] Game start event sent to ${partyPlayerSockets.length} player sockets`);
   }
 
-  // CORRECTION: Améliorer la méthode broadcastToParty
-  private broadcastToParty(partyId: number, event: string, data: any) {
-    console.log(`[WebSocket] Broadcasting '${event}' to party ${partyId}`);
-    
-    // Méthode 1: Broadcast via room
-    this.io.to(`party_${partyId}`).emit(event, data);
-    
-    // Méthode 2: Broadcast direct aux sockets de la party room
-    const partyRoom = this.partyRooms.get(partyId);
-    if (partyRoom) {
-      Array.from(partyRoom.players.values()).forEach(playerData => {
-        console.log(`[WebSocket] Direct emit '${event}' to ${playerData.user.name}`);
-        playerData.socket.emit(event, data);
-      });
-    }
-  }
-
   // CORRECTION: Nouvelle méthode pour forcer la synchronisation des joueurs
   public async forcePartySync(partyId: number) {
     console.log(`[WebSocket] Force syncing party ${partyId}`);
